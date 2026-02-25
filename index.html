@@ -1,0 +1,3589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>tmachado — 01Founders Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #18181f;
+    --border: #2a2a38; --accent: #7fff6e; --accent2: #6eb8ff; --accent3: #ff6eb4;
+    --text: #e8e8f0; --muted: #666680;
+    --font: 'Syne', sans-serif; --mono: 'DM Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: .4;
+  }
+  /* ── HERO ── */
+  .hero { position: relative; padding: 80px 60px 60px; border-bottom: 1px solid var(--border); overflow: hidden; }
+  .hero::after { content: ''; position: absolute; top: -120px; right: -80px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(127,255,110,.12) 0%, transparent 70%); pointer-events: none; }
+  .hero-tag { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; opacity: .8; }
+  .hero h1 { font-size: clamp(28px, 4vw, 52px); font-weight: 800; line-height: .95; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 span { color: var(--accent); }
+  .hero-meta { font-family: var(--mono); font-size: 13px; color: var(--muted); display: flex; gap: 32px; flex-wrap: wrap; margin-top: 24px; }
+  .hero-meta b { color: var(--text); display: block; margin-bottom: 2px; }
+  /* ── STATS ── */
+  .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border-bottom: 1px solid var(--border); }
+  .stat-cell { padding: 28px 32px; border-right: 1px solid var(--border); transition: background .2s; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: var(--surface2); }
+  .stat-num { font-size: 40px; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-bottom: 6px; }
+  .stat-num.green { color: var(--accent); } .stat-num.blue { color: var(--accent2); } .stat-num.pink { color: var(--accent3); }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .stat-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 4px; }
+  /* ── LAYOUT ── */
+  .main { padding: 48px 60px; }
+  .section-title { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  @media(max-width:900px) { .grid-2,.grid-3 { grid-template-columns: 1fr; } .hero,.main { padding: 40px 24px; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 28px; margin-bottom: 0; }
+  .card-title { font-size: 12px; font-family: var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 20px; }
+  .chart-wrap { position: relative; height: 200px; }
+  /* ── SKILLS ── */
+  .skill-row { display: grid; grid-template-columns: 120px 1fr 36px; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .skill-name { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .skill-bar-bg { background: var(--surface2); border-radius: 2px; height: 5px; overflow: hidden; }
+  .skill-bar-fill { height: 100%; background: var(--accent2); border-radius: 2px; }
+  .skill-val { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; }
+  /* ── AUDIT RATIO ── */
+  .ratio-display { text-align: center; padding: 20px 0; }
+  .ratio-big { font-size: 64px; font-weight: 800; letter-spacing: -.04em; color: var(--accent); line-height: 1; }
+  .ratio-label { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
+  .ratio-detail { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 16px; display: flex; justify-content: space-around; }
+  .ratio-detail span b { color: var(--text); display: block; font-size: 14px; }
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { border-bottom: 1px solid var(--border); }
+  th { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 10px 14px; font-weight: 400; }
+  td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .proj-name { font-weight: 700; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .type-tag { font-family: var(--mono); font-size: 10px; background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 2px; color: var(--muted); text-transform: uppercase; }
+  .badge { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; padding: 2px 8px; border-radius: 2px; }
+  .badge.pass { background: rgba(127,255,110,.12); color: var(--accent); border: 1px solid rgba(127,255,110,.25); }
+  .badge.fail { background: rgba(255,80,80,.1); color: #ff8080; border: 1px solid rgba(255,80,80,.2); }
+  .date-col { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .email-blur { cursor: pointer; filter: blur(5px); transition: filter .3s; user-select: none; }
+  .email-blur:hover { filter: blur(3px); }
+  .email-blur.revealed { filter: none; user-select: text; }
+  .search-bar { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 12px 16px; color: var(--text); font-family: var(--mono); font-size: 13px; margin-bottom: 16px; outline: none; transition: border-color .2s; }
+  .search-bar:focus { border-color: var(--accent); }
+  .search-bar::placeholder { color: var(--muted); }
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 2px; margin-bottom: 0; border-bottom: 1px solid var(--border); }
+  .tab { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; transition: all .15s; margin-bottom: -1px; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; } .tab-panel.active { display: block; }
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid var(--border); padding: 24px 60px; font-family: var(--mono); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+  .hero,.stats-bar,.card,.table-wrap { animation: fadeUp .45s ease both; }
+  .stats-bar { animation-delay:.08s; } .grid-2 .card:nth-child(2) { animation-delay:.12s; } .table-wrap { animation-delay:.18s; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="hero-tag">01Founders · Portfolio Export</p>
+  <h1>Hello,<br/><span>tmachado</span></h1>
+  <div class="hero-meta">
+    <div><b>Campus</b>london</div>
+    <div><b>Email</b><span class="email-blur" onclick="this.classList.toggle('revealed')" title="Click to reveal">rosadelonfamily@gmail.com</span></div>
+    <div><b>Joined</b>2022-09-28</div>
+    <div><b>Generated</b>25 February 2026, 18:09</div>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-num green">3.84M</div>
+    <div class="stat-label">Total XP</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num blue">448</div>
+    <div class="stat-label">Projects Attempted</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num green">430</div>
+    <div class="stat-label">Projects Passed</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num pink">58</div>
+    <div class="stat-label">Audits Given</div>
+    <div class="stat-sub">5.4 MB uploaded</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num blue">141</div>
+    <div class="stat-label">Audits Received</div>
+    <div class="stat-sub">4.1 MB reviewed</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num green">1.31</div>
+    <div class="stat-label">Audit Ratio</div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- ROW 1: XP + Audit Ratio -->
+  <div class="grid-2">
+    <div class="card">
+      <p class="card-title">XP Growth Over Time</p>
+      <div class="chart-wrap"><canvas id="xpChart"></canvas></div>
+    </div>
+    <div class="card">
+      <p class="card-title">Audit Ratio</p>
+      <div class="ratio-display">
+        <div class="ratio-big">1.31</div>
+        <div class="ratio-label">Given ÷ Received</div>
+        <div class="ratio-detail">
+          <span><b>5.4 MB</b>Given (Up)</span>
+          <span><b>4.1 MB</b>Received (Down)</span>
+        </div>
+      </div>
+      <canvas id="auditChart" style="max-height:80px;margin-top:16px"></canvas>
+    </div>
+  </div>
+
+  <!-- ROW 2: Skills + XP per project -->
+  <div class="grid-2">
+    <div class="card">
+      <p class="card-title">Skills</p>
+      
+        <div class="skill-row">
+          <span class="skill-name">Prog</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:100%"></div></div>
+          <span class="skill-val">85</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Go</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:64%"></div></div>
+          <span class="skill-val">55.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Back-End</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:64%"></div></div>
+          <span class="skill-val">55.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Html</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:64%"></div></div>
+          <span class="skill-val">55.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Front-End</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:64%"></div></div>
+          <span class="skill-val">55.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Js</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:64%"></div></div>
+          <span class="skill-val">55.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Git</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:58%"></div></div>
+          <span class="skill-val">50.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Algo</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:47%"></div></div>
+          <span class="skill-val">40.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Css</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:47%"></div></div>
+          <span class="skill-val">40.0</span>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Rust</span>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:47%"></div></div>
+          <span class="skill-val">40.0</span>
+        </div>
+    </div>
+    <div class="card">
+      <p class="card-title">Top XP Projects</p>
+      <div class="chart-wrap" style="height:280px"><canvas id="barChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PROJECTS TABLE -->
+  <p class="section-title" style="margin-top:8px">Projects</p>
+  <input class="search-bar" type="text" id="searchInput" placeholder="Search projects..." oninput="filterTable('projectsTable', this.value)"/>
+  <div class="table-wrap">
+    <table id="projectsTable">
+      <thead><tr><th>Name</th><th>Type</th><th>Grade</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>
+        
+        <tr>
+          <td class="proj-name">rt</td>
+          <td><span class="type-tag">project</span></td>
+          <td>—</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2026-01-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">filler</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2026-01-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">smart-road</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Piscine Rust Update</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">road_intersection</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Final Checkpoint-rust</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">brain_fuck</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">flat_tree</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">drop_the_blog</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">queens</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">blood_types_s</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rpn</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">scytale_decoder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">counting_words</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">count_factorial_steps</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Div 01</td>
+          <td><span class="type-tag">module</span></td>
+          <td>119%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">project_motion</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">step_iterator</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">slices_to_map</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">roman_numbers_iter</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">iterators</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">highest</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get_products</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">adding_twice</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">adding</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sales</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">closures</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">bomberman-dom</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">chaikin</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">events</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">border_cross</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">delete_prefix</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lifetimes</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">matrix_mult</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">matrix_ops</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">matrix</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Checkpoint 03-rust</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lunch_queue</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">format_me</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">organize_garage</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">negative_spelling</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get_document_id</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">inv_pyramid</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">commits_stats</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">roman_numbers</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lalgebra_vector</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lalgebra_scalar</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">vector_operations</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">blood_types</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">traits</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">easy_traits</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">generics_list</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">generics</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-10-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">drop_the_thread</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ref_cell</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">how_many_references</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">box_recursion</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">borrow_box</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">box_it</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">mobs</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">expected_variable</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Checkpoint 02-rust</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">spelling</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">diamond_creation</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">prime_checker</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lucas_number</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">reverse_it</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">scytale_cipher</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pig_latin</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rgb_match</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rot</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">logic_number</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">talking</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pangram</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ordinal</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">searching</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">scores</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">stars</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">AI.starter Piscine</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">shopping_mall</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">macro_calculator</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">does_it_fit</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">middle_day</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">boxing_todo</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">error_types</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cipher</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">banner</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">question_mark</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">profanity_filter</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">handling</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">panic</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">unwrap_or_expect</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">drawing</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Checkpoint 01-rust</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">insertion_sort</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">smallest</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">matrix_multiplication</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">collect</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">hashing</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">string_permutation</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">bigger</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">simple_hash</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">edit_distance</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">division_and_remainder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">capitalizing</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">strings</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">arrays</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">card_deck</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">circle</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">changes</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-17</td>
+        </tr>
+        <tr>
+          <td class="proj-name">arrange_it</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tic_tac_toe</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">borrow_me_the_reference</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">copy</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ownership</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">name_initials</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">string_literals</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">to_url</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">doubtful</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">borrow</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tuples_refs</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">matrix_transposition</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">fibonacci2</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">find_factorial</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">reverse_string</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">groceries</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">looping</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">speed_transformation</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">temperature_conv</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">scalar</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-09-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">AI.Starter Piscine L2</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>—</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2025-08-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">netfix</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-08-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">knowledge-gate</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">its-dynamic</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">start-building</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">power-recap</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">robots-harmony</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">colorful-legs</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">colorful-arms</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">first-hello</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">first-wink</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">i-win-arguments</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">first-function</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">only-if</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">good-recipe</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listed</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">transform-objects</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">objects-around</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">the-smooth-operator</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">play-with-variables</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">declare-everything</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">star-forge</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">first-move</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">glance-on-power</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">class-it</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">embedded-organs</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">select-then-style</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">call-it</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">the-skeleton</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-07-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">wget</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-03-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">mini-framework</td>
+          <td><span class="type-tag">project</span></td>
+          <td>180%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">atm-management-system</td>
+          <td><span class="type-tag">project</span></td>
+          <td>150%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-02-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">social-network</td>
+          <td><span class="type-tag">project</span></td>
+          <td>124%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2025-02-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">git</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">graphql</td>
+          <td><span class="type-tag">project</span></td>
+          <td>168%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-10-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">make-your-game-different-maps</td>
+          <td><span class="type-tag">project</span></td>
+          <td>154%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-09-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">make-your-game-history</td>
+          <td><span class="type-tag">project</span></td>
+          <td>200%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-09-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sortwordarr</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">atoibase</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rot13</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printdigits</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">displayalpham</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">strlen</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">countdown</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printcomb</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-07-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">real-time-forum</td>
+          <td><span class="type-tag">project</span></td>
+          <td>156%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-05-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">make-your-game-score-handling</td>
+          <td><span class="type-tag">project</span></td>
+          <td>160%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-03-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">make-your-game</td>
+          <td><span class="type-tag">project</span></td>
+          <td>154%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-02-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lastrune</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-02-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">displayz</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-02-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">displayalrevm</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-02-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">displaya</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-02-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Exam 03 Final Exam</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>9%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-01-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">max</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-01-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">firstrune</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2024-01-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Piscine JS Update</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2024-01-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">groupie-tracker-visualizations</td>
+          <td><span class="type-tag">project</span></td>
+          <td>247%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-31</td>
+        </tr>
+        <tr>
+          <td class="proj-name">happiness-manager</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">personal-shopper</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">gatecrashers</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">uninvited</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">friend-support</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tell-it-cypher</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tell-me-vip</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tell-me-who</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tell-me-how-many</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">verydisco-reverso</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">verydisco-forever</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-19</td>
+        </tr>
+        <tr>
+          <td class="proj-name">verydisco</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-18</td>
+        </tr>
+        <tr>
+          <td class="proj-name">clonernews</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-18</td>
+        </tr>
+        <tr>
+          <td class="proj-name">race</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">series</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">all</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">gougle-search</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-15</td>
+        </tr>
+        <tr>
+          <td class="proj-name">is-winner</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get-json</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">keep-trying-or-giveup</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">interpolation</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sortable</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>113%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">throttle</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">debounce</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-14</td>
+        </tr>
+        <tr>
+          <td class="proj-name">flagger</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">neuron</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pronoun</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">replica</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">deep-copy</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-13</td>
+        </tr>
+        <tr>
+          <td class="proj-name">curry-entries</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-12</td>
+        </tr>
+        <tr>
+          <td class="proj-name">manipulate-entries</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-12</td>
+        </tr>
+        <tr>
+          <td class="proj-name">manipulate-keys</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">manipulate-values</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">fusion</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pick-omit</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">invert</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">where-do-we-go</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">gossip-grid</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pick-and-click</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">mouse-trap</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">keycodes-symphony</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">fifty-shades-of-cold</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pimp-my-style</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">harder-bigger-bolder-stronger</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">build-brick-and-break</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get-them-all</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">currify</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">flow</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">has-city</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sweet-curry</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">quantifiers</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">reduce</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">filter</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">mapper</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">for-each</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">long-words</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">using-reduce</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">using-filter</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">using-map</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">unicode-technical-report-35</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sunny-sunday</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">day-of-the-year</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">count-leap-years</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">match-cron</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rebecca-black</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get-some-time</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">date-is</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">dr-strange</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">crossword</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ion-out</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">same-amount</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">vowel-dots</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">letter-space-number</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">its-a-match</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sums</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">find-expression</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-12-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">flat</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pyramid</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">triangle</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">get</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">molecules-cells</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">nasa</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">chunky</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">unbreakable</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">reverser</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cut-corners</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">keep-cut</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">slicer</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">index-of</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">elementary</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">repeat</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">block-chain</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">collections</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">physics</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">is</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sign</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">min-max</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">abs</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">method-man</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">biggie-smalls</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">circular</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">dog-years</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">change</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">concat-str</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">last-first-kiss</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">returns</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">more-or-less</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">mutability</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">declarations</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">primitives</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">how-2-js</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">forum-image-upload</td>
+          <td><span class="type-tag">project</span></td>
+          <td>220%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">forum</td>
+          <td><span class="type-tag">project</span></td>
+          <td>141%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-11-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">groupie-tracker-geolocalization</td>
+          <td><span class="type-tag">project</span></td>
+          <td>213%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-09-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-output</td>
+          <td><span class="type-tag">project</span></td>
+          <td>165%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-09-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">lem-in</td>
+          <td><span class="type-tag">project</span></td>
+          <td>177%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-09-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Piscine Go - 3 Weeks</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-09-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">groupie-tracker-search-bar</td>
+          <td><span class="type-tag">project</span></td>
+          <td>165%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-08-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Check-Points</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>65%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printmemory</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rostring</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">piglatin</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">chunk</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">wdmatch</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-08-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">groupie-tracker</td>
+          <td><span class="type-tag">project</span></td>
+          <td>169%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-07-31</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-web-stylize</td>
+          <td><span class="type-tag">project</span></td>
+          <td>288%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-07-12</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-fs</td>
+          <td><span class="type-tag">project</span></td>
+          <td>165%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-07-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-web-export-file</td>
+          <td><span class="type-tag">project</span></td>
+          <td>225%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-06-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-justify</td>
+          <td><span class="type-tag">project</span></td>
+          <td>160%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-06-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-web-dockerize</td>
+          <td><span class="type-tag">project</span></td>
+          <td>280%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-06-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-web</td>
+          <td><span class="type-tag">project</span></td>
+          <td>184%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-06-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art-reverse</td>
+          <td><span class="type-tag">project</span></td>
+          <td>184%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-06-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ascii-art</td>
+          <td><span class="type-tag">project</span></td>
+          <td>164%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-05-16</td>
+        </tr>
+        <tr>
+          <td class="proj-name">math-skills</td>
+          <td><span class="type-tag">project</span></td>
+          <td>150%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-05-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">go-reloaded</td>
+          <td><span class="type-tag">project</span></td>
+          <td>120%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-05-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">quadchecker</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-04-18</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Piscine Go - weekfour</td>
+          <td><span class="type-tag">piscine</span></td>
+          <td>—</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-04-18</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rotatevowels</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-31</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ztail</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-30</td>
+        </tr>
+        <tr>
+          <td class="proj-name">flags</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-29</td>
+        </tr>
+        <tr>
+          <td class="proj-name">convertbase</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">eightqueens</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printnbrbase</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">join</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">basicjoin</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">atoi</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">basicatoi2</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">basicatoi</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">strrev</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printcombn</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">maxwordcountn</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sortedlistmerge</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sortlistinsert</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listsort</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listmerge</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listremoveif</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listfind</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">swap</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreedeletenode</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreetransplant</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreemin</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreemax</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeapplybylevel</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeisbinary</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreelevelcount</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreesearchitem</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeapplypreorder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeapplypostorder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeapplyinorder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">btreeinsertdata</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listforeachif</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listforeach</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listreverse</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listat</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listclear</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listlast</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listsize</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listpushfront</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">listpushback</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">itoa</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">unmatch</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">doop</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-11</td>
+        </tr>
+        <tr>
+          <td class="proj-name">activebits</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">compact</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">fixthemain</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ispowerof2</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pilot</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">enigma</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-10</td>
+        </tr>
+        <tr>
+          <td class="proj-name">comcheck</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">collatzcountdown</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">abort</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">advancedsortwordarr</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">rot14</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-09</td>
+        </tr>
+        <tr>
+          <td class="proj-name">issorted</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-08</td>
+        </tr>
+        <tr>
+          <td class="proj-name">countif</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">any</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">map</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printnbr</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">foreach</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cat</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-07</td>
+        </tr>
+        <tr>
+          <td class="proj-name">displayfile</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">point</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sudoku</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">boolean</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-06</td>
+        </tr>
+        <tr>
+          <td class="proj-name">nbrconvertalpha</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-05</td>
+        </tr>
+        <tr>
+          <td class="proj-name">split</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printwordstables</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">splitwhitespaces</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">concatparams</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">makerange</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-04</td>
+        </tr>
+        <tr>
+          <td class="proj-name">appendrange</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Exam 02</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>8%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sortparams</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">revparams</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printparams</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-03</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printprogramname</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printnbrinorder</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">trimatoi</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">capitalize</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">tolower</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">toupper</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-02</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isprintable</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isnumeric</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isalpha</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">islower</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isupper</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">concat</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">index</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">alphacount</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">compare</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">nrune</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">findnextprime</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isprime</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">sqrt</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">fibonacci</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">recursivepower</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">iterativepower</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-03-01</td>
+        </tr>
+        <tr>
+          <td class="proj-name">recursivefactorial</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">iterativefactorial</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-28</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printstr</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ultimatedivmod</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">ultimatepointone</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">quad</td>
+          <td><span class="type-tag">raid</span></td>
+          <td>0%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-02-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">divmod</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-27</td>
+        </tr>
+        <tr>
+          <td class="proj-name">pointone</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-25</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Exam 01</td>
+          <td><span class="type-tag">exam</span></td>
+          <td>54%</td>
+          <td><span class="badge fail">—</span></td>
+          <td class="date-col">2023-02-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printcomb2</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-24</td>
+        </tr>
+        <tr>
+          <td class="proj-name">isnegative</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-23</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printreversealphabet</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">printalphabet</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp8</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp6</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp5</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-22</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp3</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp2</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">cl-camp1</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">who-are-you</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">introduction</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-21</td>
+        </tr>
+        <tr>
+          <td class="proj-name">to-git-or-not-to-git</td>
+          <td><span class="type-tag">exercise</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2023-02-20</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Administration</td>
+          <td><span class="type-tag">administration</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2022-10-26</td>
+        </tr>
+        <tr>
+          <td class="proj-name">Toad</td>
+          <td><span class="type-tag">games</span></td>
+          <td>100%</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td class="date-col">2022-10-25</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AUDITS TABS -->
+  <p class="section-title">Audit History</p>
+  <div class="card" style="padding:0;margin-bottom:32px">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('given')">Audits Given (58)</div>
+      <div class="tab" onclick="switchTab('received')">Audits Received (141)</div>
+    </div>
+    <div style="padding:0 20px 20px">
+      <div id="tab-given" class="tab-panel active">
+        <table>
+          <thead><tr><th>Project</th><th>Grade</th><th>Result</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="proj-name">rt</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2026-02-11</td>
+            </tr>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2026-02-04</td>
+            </tr>
+            <tr>
+              <td class="proj-name">lem-in</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2026-01-28</td>
+            </tr>
+            <tr>
+              <td class="proj-name">make-your-game</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-15</td>
+            </tr>
+            <tr>
+              <td class="proj-name">groupie-tracker</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-03</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-05</td>
+            </tr>
+            <tr>
+              <td class="proj-name">forum</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-03</td>
+            </tr>
+            <tr>
+              <td class="proj-name">social-network</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-10-20</td>
+            </tr>
+            <tr>
+              <td class="proj-name">mini-framework</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-10-20</td>
+            </tr>
+            <tr>
+              <td class="proj-name">social-network</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-10-06</td>
+            </tr></tbody>
+        </table>
+      </div>
+      <div id="tab-received" class="tab-panel">
+        <table>
+          <thead><tr><th>Project</th><th>Grade</th><th>Result</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2026-01-07</td>
+            </tr>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-30</td>
+            </tr>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-30</td>
+            </tr>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-30</td>
+            </tr>
+            <tr>
+              <td class="proj-name">filler</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-12-30</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-27</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-27</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-27</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-27</td>
+            </tr>
+            <tr>
+              <td class="proj-name">smart-road</td>
+              <td>100%</td>
+              <td><span class="badge pass">PASS</span></td>
+              <td class="date-col">2025-11-27</td>
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>⬡ 01Founders Portfolio — tmachado</span>
+  <span>Exported 25 February 2026, 18:09</span>
+</footer>
+
+<script>
+// ── DATA ──
+const xpLabels     = ["2023-02-20", "2023-02-20", "2023-02-21", "2023-02-21", "2023-02-21", "2023-02-21", "2023-02-21", "2023-02-22", "2023-02-22", "2023-02-22", "2023-02-22", "2023-02-23", "2023-02-23", "2023-02-23", "2023-02-24", "2023-02-24", "2023-02-24", "2023-02-24", "2023-02-24", "2023-02-27", "2023-02-28", "2023-02-28", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-01", "2023-03-02", "2023-03-02", "2023-03-02", "2023-03-02", "2023-03-02", "2023-03-02", "2023-03-03", "2023-03-03", "2023-03-03", "2023-03-03", "2023-03-03", "2023-03-03", "2023-03-04", "2023-03-04", "2023-03-04", "2023-03-04", "2023-03-04", "2023-03-06", "2023-03-06", "2023-03-06", "2023-03-06", "2023-03-07", "2023-03-07", "2023-03-07", "2023-03-07", "2023-03-07", "2023-03-08", "2023-03-08", "2023-03-08", "2023-03-09", "2023-03-09", "2023-03-09", "2023-03-09", "2023-03-09", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-10", "2023-03-11", "2023-03-11", "2023-03-11", "2023-03-11", "2023-03-11", "2023-03-20", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-21", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-22", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-23", "2023-03-24", "2023-03-25", "2023-03-25", "2023-03-25", "2023-03-25", "2023-03-30", "2023-03-31", "2023-04-18", "2023-05-03", "2023-05-10", "2023-05-12", "2023-05-16", "2023-05-18", "2023-06-01", "2023-06-05", "2023-06-20", "2023-06-21", "2023-06-22", "2023-06-22", "2023-07-04", "2023-07-12", "2023-07-28", "2023-07-28", "2023-07-31", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-04", "2023-08-21", "2023-09-06", "2023-09-06", "2023-09-25", "2023-11-08", "2023-11-23", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-27", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-28", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-29", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-11-30", "2023-12-01", "2023-12-01", "2023-12-01", "2023-12-01", "2023-12-01", "2023-12-01", "2023-12-01", "2023-12-04", "2023-12-04", "2023-12-04", "2023-12-04", "2023-12-04", "2023-12-04", "2023-12-04", "2023-12-05", "2023-12-05", "2023-12-05", "2023-12-05", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-06", "2023-12-07", "2023-12-07", "2023-12-07", "2023-12-08", "2023-12-08", "2023-12-08", "2023-12-09", "2023-12-09", "2023-12-09", "2023-12-09", "2023-12-11", "2023-12-11", "2023-12-11", "2023-12-11", "2023-12-11", "2023-12-12", "2023-12-12", "2023-12-13", "2023-12-13", "2023-12-13", "2023-12-13", "2023-12-13", "2023-12-14", "2023-12-14", "2023-12-14", "2023-12-14", "2023-12-14", "2023-12-14", "2023-12-14", "2023-12-15", "2023-12-15", "2023-12-15", "2023-12-15", "2023-12-18", "2023-12-18", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-19", "2023-12-20", "2023-12-20", "2023-12-20", "2023-12-31", "2024-02-29", "2024-03-27", "2024-05-22", "2024-09-06", "2024-09-11", "2024-10-28", "2024-12-05", "2025-02-10", "2025-02-28", "2025-03-03", "2025-03-14", "2025-07-14", "2025-07-14", "2025-07-14", "2025-07-14", "2025-07-14", "2025-07-14", "2025-07-14", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-15", "2025-07-16", "2025-07-16", "2025-07-16", "2025-07-16", "2025-07-16", "2025-07-21", "2025-07-23", "2025-07-24", "2025-07-24", "2025-07-25", "2025-08-01", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-15", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-16", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-17", "2025-09-19", "2025-09-19", "2025-09-19", "2025-09-19", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-22", "2025-09-23", "2025-09-23", "2025-09-23", "2025-09-24", "2025-09-25", "2025-09-25", "2025-09-25", "2025-09-25", "2025-09-25", "2025-09-25", "2025-09-25", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-26", "2025-09-29", "2025-09-29", "2025-09-29", "2025-09-29", "2025-09-29", "2025-09-29", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-01", "2025-10-03", "2025-10-03", "2025-10-03", "2025-10-03", "2025-10-03", "2025-10-03", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-06", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-08", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-10", "2025-10-13", "2025-12-05", "2026-01-07"];
+const xpValues     = [263.0, 763.0, 1413.0, 1901.0, 2501.0, 3101.0, 3701.0, 4301.0, 5014.0, 5614.0, 6214.0, 6927.0, 7640.0, 8590.0, 13190.0, 22390.0, 36190.0, 54590.0, 77590.0, 77990.0, 80440.0, 82890.0, 85340.0, 87790.0, 90853.0, 93916.0, 96979.0, 100042.0, 102492.0, 104942.0, 107392.0, 109842.0, 112292.0, 114892.0, 118142.0, 121392.0, 124642.0, 127892.0, 131142.0, 134392.0, 137642.0, 140892.0, 144330.0, 147768.0, 151206.0, 153956.0, 156706.0, 159456.0, 162894.0, 170194.0, 184794.0, 187544.0, 190294.0, 193732.0, 197357.0, 200257.0, 203882.0, 207532.0, 211182.0, 217570.0, 222133.0, 226696.0, 230346.0, 233996.0, 237646.0, 241296.0, 245859.0, 250609.0, 255359.0, 260109.0, 265809.0, 269609.0, 274359.0, 278159.0, 282909.0, 286709.0, 290509.0, 300509.0, 320509.0, 350509.0, 354309.0, 359059.0, 362859.0, 366659.0, 370459.0, 374259.0, 379959.0, 384709.0, 388659.0, 389284.0, 390097.0, 390747.0, 391547.0, 392547.0, 393735.0, 395160.0, 396348.0, 397723.0, 399373.0, 401023.0, 402898.0, 404773.0, 406961.0, 409061.0, 411511.0, 413961.0, 416411.0, 419124.0, 422224.0, 425324.0, 426699.0, 428349.0, 430224.0, 432099.0, 434287.0, 437087.0, 438737.0, 442862.0, 446987.0, 451537.0, 455887.0, 461362.0, 466437.0, 468137.0, 473137.0, 483137.0, 484637.0, 490762.0, 492262.0, 493762.0, 499887.0, 509087.0, 518287.0, 524412.0, 533612.0, 539737.0, 548937.0, 549037.0, 549237.0, 573737.0, 573837.0, 574037.0, 574237.0, 574637.0, 575137.0, 575737.0, 576437.0, 577237.0, 589487.0, 623862.0, 629987.0, 642237.0, 718487.0, 737587.0, 737850.0, 738350.0, 739000.0, 739650.0, 740450.0, 741250.0, 742050.0, 743000.0, 743950.0, 744900.0, 745850.0, 746950.0, 748050.0, 749150.0, 750250.0, 751500.0, 752750.0, 754000.0, 755250.0, 756500.0, 757750.0, 759000.0, 760250.0, 761500.0, 762900.0, 764300.0, 765700.0, 767100.0, 768500.0, 769900.0, 771450.0, 773000.0, 774550.0, 776100.0, 777650.0, 779200.0, 780900.0, 782450.0, 784000.0, 785700.0, 787400.0, 789100.0, 790800.0, 792500.0, 794200.0, 795900.0, 797750.0, 799600.0, 801450.0, 803300.0, 805150.0, 807000.0, 808850.0, 810700.0, 812550.0, 814400.0, 816400.0, 818400.0, 820400.0, 822400.0, 824400.0, 826400.0, 828400.0, 830400.0, 832550.0, 834550.0, 836700.0, 838850.0, 841000.0, 843150.0, 845300.0, 847450.0, 849600.0, 851750.0, 853900.0, 856200.0, 858500.0, 860800.0, 863100.0, 865400.0, 867700.0, 870000.0, 872300.0, 874600.0, 877050.0, 879500.0, 881950.0, 884400.0, 886850.0, 889150.0, 891600.0, 894050.0, 896500.0, 898950.0, 901400.0, 903850.0, 906300.0, 908900.0, 911500.0, 914100.0, 916700.0, 919300.0, 921900.0, 924500.0, 927100.0, 929700.0, 932300.0, 934900.0, 937500.0, 940250.0, 943000.0, 955250.0, 1102250.0, 1151250.0, 1254750.0, 1303750.0, 1352750.0, 1452750.0, 1457750.0, 1937750.0, 2013000.0, 2158000.0, 2448000.0, 2448500.0, 2449150.0, 2449800.0, 2450600.0, 2451400.0, 2452200.0, 2453388.0, 2454576.0, 2455764.0, 2456952.0, 2458327.0, 2459702.0, 2461077.0, 2462452.0, 2464015.0, 2465578.0, 2467141.0, 2468704.0, 2470804.0, 2472904.0, 2475004.0, 2477104.0, 2478654.0, 2479154.0, 2479804.0, 2480454.0, 2481254.0, 2691254.0, 2691754.0, 2692404.0, 2693054.0, 2693854.0, 2694654.0, 2695454.0, 2696404.0, 2697354.0, 2698304.0, 2699254.0, 2700354.0, 2701004.0, 2701654.0, 2702454.0, 2703254.0, 2704054.0, 2705004.0, 2705954.0, 2706904.0, 2707854.0, 2708954.0, 2709604.0, 2710404.0, 2711204.0, 2712004.0, 2712954.0, 2713904.0, 2714854.0, 2715804.0, 2716904.0, 2718004.0, 2719104.0, 2720204.0, 2723004.0, 2728604.0, 2737004.0, 2748204.0, 2749604.0, 2751004.0, 2752554.0, 2754104.0, 2755654.0, 2757204.0, 2758754.0, 2760304.0, 2762004.0, 2763704.0, 2765254.0, 2766804.0, 2768354.0, 2769904.0, 2771454.0, 2773004.0, 2774554.0, 2776104.0, 2777654.0, 2779354.0, 2781054.0, 2782754.0, 2784454.0, 2786154.0, 2787854.0, 2792154.0, 2800754.0, 2813654.0, 2830854.0, 2852354.0, 2854054.0, 2855904.0, 2858054.0, 2860204.0, 2862354.0, 2864504.0, 2866654.0, 2868954.0, 2871104.0, 2873254.0, 2875404.0, 2877554.0, 2879854.0, 2882154.0, 2884454.0, 2886754.0, 2889054.0, 2891354.0, 2896854.0, 2907854.0, 2924354.0, 2946354.0, 2973854.0, 3006854.0, 3009604.0, 3012354.0, 3015254.0, 3018154.0, 3021054.0, 3023954.0, 3026854.0, 3029004.0, 3348004.0, 3350754.0, 3353654.0, 3356554.0, 3359454.0, 3362354.0, 3365254.0, 3368154.0, 3371054.0, 3373954.0, 3376854.0, 3379754.0, 3387354.0, 3402554.0, 3425354.0, 3455754.0, 3493754.0, 3539354.0, 3592554.0, 3653354.0, 3721754.0, 3724504.0, 3799754.0, 3840004.0];
+const xpAmounts    = [263.0, 500.0, 650.0, 488.0, 600.0, 600.0, 600.0, 600.0, 713.0, 600.0, 600.0, 713.0, 713.0, 950.0, 4600.0, 9200.0, 13800.0, 18400.0, 23000.0, 400.0, 2450.0, 2450.0, 2450.0, 2450.0, 3063.0, 3063.0, 3063.0, 3063.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2600.0, 3250.0, 3250.0, 3250.0, 3250.0, 3250.0, 3250.0, 3250.0, 3250.0, 3438.0, 3438.0, 3438.0, 2750.0, 2750.0, 2750.0, 3438.0, 7300.0, 14600.0, 2750.0, 2750.0, 3438.0, 3625.0, 2900.0, 3625.0, 3650.0, 3650.0, 6388.0, 4563.0, 4563.0, 3650.0, 3650.0, 3650.0, 3650.0, 4563.0, 4750.0, 4750.0, 4750.0, 5700.0, 3800.0, 4750.0, 3800.0, 4750.0, 3800.0, 3800.0, 10000.0, 20000.0, 30000.0, 3800.0, 4750.0, 3800.0, 3800.0, 3800.0, 3800.0, 5700.0, 4750.0, 3950.0, 625.0, 813.0, 650.0, 800.0, 1000.0, 1188.0, 1425.0, 1188.0, 1375.0, 1650.0, 1650.0, 1875.0, 1875.0, 2188.0, 2100.0, 2450.0, 2450.0, 2450.0, 2713.0, 3100.0, 3100.0, 1375.0, 1650.0, 1875.0, 1875.0, 2188.0, 2800.0, 1650.0, 4125.0, 4125.0, 4550.0, 4350.0, 5475.0, 5075.0, 1700.0, 5000.0, 10000.0, 1500.0, 6125.0, 1500.0, 1500.0, 6125.0, 9200.0, 9200.0, 6125.0, 9200.0, 6125.0, 9200.0, 100.0, 200.0, 24500.0, 100.0, 200.0, 200.0, 400.0, 500.0, 600.0, 700.0, 800.0, 12250.0, 34375.0, 6125.0, 12250.0, 76250.0, 19100.0, 263.0, 500.0, 650.0, 650.0, 800.0, 800.0, 800.0, 950.0, 950.0, 950.0, 950.0, 1100.0, 1100.0, 1100.0, 1100.0, 1250.0, 1250.0, 1250.0, 1250.0, 1250.0, 1250.0, 1250.0, 1250.0, 1250.0, 1400.0, 1400.0, 1400.0, 1400.0, 1400.0, 1400.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1700.0, 1550.0, 1550.0, 1700.0, 1700.0, 1700.0, 1700.0, 1700.0, 1700.0, 1700.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 1850.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2150.0, 2000.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2300.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2600.0, 2750.0, 2750.0, 12250.0, 147000.0, 49000.0, 103500.0, 49000.0, 49000.0, 100000.0, 5000.0, 480000.0, 75250.0, 145000.0, 290000.0, 500.0, 650.0, 650.0, 800.0, 800.0, 800.0, 1188.0, 1188.0, 1188.0, 1188.0, 1375.0, 1375.0, 1375.0, 1375.0, 1563.0, 1563.0, 1563.0, 1563.0, 2100.0, 2100.0, 2100.0, 2100.0, 1550.0, 500.0, 650.0, 650.0, 800.0, 210000.0, 500.0, 650.0, 650.0, 800.0, 800.0, 800.0, 950.0, 950.0, 950.0, 950.0, 1100.0, 650.0, 650.0, 800.0, 800.0, 800.0, 950.0, 950.0, 950.0, 950.0, 1100.0, 650.0, 800.0, 800.0, 800.0, 950.0, 950.0, 950.0, 950.0, 1100.0, 1100.0, 1100.0, 1100.0, 2800.0, 5600.0, 8400.0, 11200.0, 1400.0, 1400.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1700.0, 1700.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1550.0, 1700.0, 1700.0, 1700.0, 1700.0, 1700.0, 1700.0, 4300.0, 8600.0, 12900.0, 17200.0, 21500.0, 1700.0, 1850.0, 2150.0, 2150.0, 2150.0, 2150.0, 2150.0, 2300.0, 2150.0, 2150.0, 2150.0, 2150.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 2300.0, 5500.0, 11000.0, 16500.0, 22000.0, 27500.0, 33000.0, 2750.0, 2750.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2150.0, 319000.0, 2750.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 2900.0, 7600.0, 15200.0, 22800.0, 30400.0, 38000.0, 45600.0, 53200.0, 60800.0, 68400.0, 2750.0, 75250.0, 40250.0];
+const xpProjects   = ["introduction", "to-git-or-not-to-git", "who-are-you", "cl-camp1", "cl-camp2", "cl-camp3", "cl-camp5", "cl-camp6", "cl-camp8", "printalphabet", "printreversealphabet", "printdigits", "isnegative", "printcomb", "displaya", "printdigits", "countdown", "displayalpham", "displayalrevm", "quad", "iterativefactorial", "recursivefactorial", "iterativepower", "recursivepower", "fibonacci", "sqrt", "isprime", "findnextprime", "firstrune", "lastrune", "nrune", "compare", "alphacount", "index", "concat", "isupper", "islower", "isalpha", "isnumeric", "isprintable", "toupper", "tolower", "capitalize", "trimatoi", "printnbrinorder", "printprogramname", "printparams", "revparams", "sortparams", "displayz", "lastrune", "appendrange", "makerange", "concatparams", "splitwhitespaces", "printwordstables", "split", "boolean", "sudoku", "point", "displayfile", "cat", "foreach", "map", "any", "countif", "issorted", "doop", "sortwordarr", "rot14", "advancedsortwordarr", "abort", "collatzcountdown", "comcheck", "enigma", "pilot", "ispowerof2", "displayalpham", "firstrune", "max", "fixthemain", "compact", "atoi", "activebits", "doop", "max", "unmatch", "join", "itoa", "listpushback", "listpushfront", "listsize", "listlast", "listclear", "listat", "listreverse", "listforeach", "listforeachif", "btreeinsertdata", "btreeapplyinorder", "btreeapplypostorder", "btreeapplypreorder", "btreesearchitem", "btreelevelcount", "btreeisbinary", "btreeapplybylevel", "btreemax", "btreemin", "btreetransplant", "btreedeletenode", "listfind", "listremoveif", "listmerge", "listsort", "sortlistinsert", "sortedlistmerge", "printcombn", "printnbrbase", "atoibase", "eightqueens", "convertbase", "ztail", "rotatevowels", "quadchecker", "go-reloaded", "math-skills", "Div 01", "ascii-art", "Div 01", "Div 01", "ascii-art-reverse", "ascii-art-web", "ascii-art-web-dockerize", "ascii-art-justify", "ascii-art-web-export-file", "ascii-art-fs", "ascii-art-web-stylize", "displayalpham", "strlen", "groupie-tracker", "printdigits", "countdown", "wdmatch", "chunk", "piglatin", "sortwordarr", "rostring", "atoibase", "groupie-tracker-search-bar", "lem-in", "ascii-art-output", "groupie-tracker-geolocalization", "forum", "forum-image-upload", "how-2-js", "primitives", "declarations", "mutability", "more-or-less", "returns", "last-first-kiss", "concat-str", "change", "dog-years", "circular", "biggie-smalls", "method-man", "abs", "min-max", "sign", "is", "physics", "collections", "block-chain", "repeat", "elementary", "index-of", "slicer", "keep-cut", "cut-corners", "reverser", "unbreakable", "chunky", "nasa", "molecules-cells", "get", "triangle", "pyramid", "flat", "find-expression", "sums", "its-a-match", "letter-space-number", "vowel-dots", "same-amount", "ion-out", "crossword", "dr-strange", "date-is", "get-some-time", "rebecca-black", "match-cron", "count-leap-years", "day-of-the-year", "sunny-sunday", "unicode-technical-report-35", "using-map", "using-filter", "using-reduce", "long-words", "for-each", "mapper", "filter", "reduce", "quantifiers", "sweet-curry", "has-city", "flow", "currify", "get-them-all", "build-brick-and-break", "harder-bigger-bolder-stronger", "pimp-my-style", "fifty-shades-of-cold", "keycodes-symphony", "mouse-trap", "pick-and-click", "gossip-grid", "where-do-we-go", "invert", "pick-omit", "fusion", "manipulate-values", "manipulate-keys", "manipulate-entries", "curry-entries", "deep-copy", "replica", "pronoun", "neuron", "flagger", "debounce", "throttle", "sortable", "interpolation", "keep-trying-or-giveup", "get-json", "is-winner", "gougle-search", "all", "series", "race", "clonernews", "verydisco", "verydisco-forever", "verydisco-reverso", "tell-me-how-many", "tell-me-who", "tell-me-vip", "tell-it-cypher", "friend-support", "uninvited", "gatecrashers", "personal-shopper", "happiness-manager", "groupie-tracker-visualizations", "make-your-game", "make-your-game-score-handling", "real-time-forum", "make-your-game-history", "make-your-game-different-maps", "graphql", "git", "social-network", "atm-management-system", "mini-framework", "wget", "the-skeleton", "call-it", "select-then-style", "embedded-organs", "class-it", "glance-on-power", "first-move", "star-forge", "declare-everything", "play-with-variables", "the-smooth-operator", "objects-around", "transform-objects", "listed", "good-recipe", "only-if", "first-function", "i-win-arguments", "first-wink", "first-hello", "colorful-arms", "colorful-legs", "robots-harmony", "power-recap", "start-building", "its-dynamic", "knowledge-gate", "netfix", "scalar", "temperature_conv", "speed_transformation", "looping", "groceries", "reverse_string", "find_factorial", "fibonacci2", "matrix_transposition", "division_and_remainder", "tuples_refs", "borrow", "doubtful", "to_url", "string_literals", "name_initials", "ownership", "copy", "borrow_me_the_reference", "tic_tac_toe", "arrange_it", "changes", "circle", "card_deck", "arrays", "strings", "capitalizing", "edit_distance", "simple_hash", "bigger", "string_permutation", "hashing", "collect", "matrix_multiplication", "smallest", "inv_pyramid", "insertion_sort", "drawing", "unwrap_or_expect", "panic", "handling", "profanity_filter", "question_mark", "banner", "cipher", "error_types", "boxing_todo", "middle_day", "does_it_fit", "macro_calculator", "shopping_mall", "stars", "scores", "searching", "ordinal", "pangram", "talking", "logic_number", "rot", "rgb_match", "pig_latin", "scytale_cipher", "reverse_it", "lucas_number", "get_document_id", "prime_checker", "scytale_decoder", "diamond_creation", "spelling", "box_it", "borrow_box", "box_recursion", "how_many_references", "ref_cell", "drop_the_thread", "generics", "generics_list", "easy_traits", "traits", "blood_types", "vector_operations", "lalgebra_scalar", "lalgebra_vector", "commits_stats", "roman_numbers", "inv_pyramid", "get_document_id", "rpn", "organize_garage", "format_me", "lunch_queue", "matrix", "matrix_ops", "matrix_mult", "lifetimes", "delete_prefix", "border_cross", "events", "chaikin", "bomberman-dom", "closures", "sales", "adding", "adding_twice", "get_products", "highest", "iterators", "roman_numbers_iter", "slices_to_map", "step_iterator", "project_motion", "count_factorial_steps", "counting_words", "scytale_decoder", "rpn", "blood_types_s", "queens", "drop_the_blog", "flat_tree", "brain_fuck", "road_intersection", "smart-road", "filler"];
+const skillLabels  = ["Prog", "Go", "Back-End", "Html", "Front-End", "Js", "Git", "Algo", "Css", "Rust", "Sql", "C", "Django", "Python", "Game"];
+const skillValues  = [85, 55.0, 55.0, 55.0, 55.0, 55.0, 50.0, 40.0, 40.0, 40.0, 30.0, 30.0, 30.0, 30.0, 28.0];
+const totalUp      = 5361108;
+const totalDown    = 4096965;
+
+// ── XP LINE CHART ──
+if (xpLabels.length > 0) {
+  new Chart(document.getElementById('xpChart').getContext('2d'), {
+    type: 'line',
+    data: { labels: xpLabels, datasets: [{ data: xpValues, borderColor: '#7fff6e', backgroundColor: 'rgba(127,255,110,.08)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: true, tension: .4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: {
+        title: (i) => xpProjects[i[0].dataIndex] || xpLabels[i[0].dataIndex],
+        label: (i) => ` +${xpAmounts[i.dataIndex].toLocaleString()} XP  (total: ${i.raw.toLocaleString()})`
+      }, backgroundColor: '#18181f', borderColor: '#2a2a38', borderWidth: 1, titleColor: '#e8e8f0', bodyColor: '#7fff6e' } },
+      scales: { x: { ticks: { color: '#666680', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 8, maxRotation: 0 }, grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#666680', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 5, callback: (v) => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v } } }
+    }
+  });
+}
+
+  // ── AUDIT DOUGHNUT ──
+  if (totalUp > 0 || totalDown > 0) {
+  new Chart(document.getElementById('auditChart').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: ['Given (Up)', 'Received (Down)'], datasets: [{ data: [totalUp, totalDown], backgroundColor: ['rgba(127,255,110,.7)', 'rgba(110,184,255,.7)'], borderWidth: 0, hoverOffset: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { color: '#666680', font: { family: 'DM Mono', size: 10 }, padding: 16 } }, tooltip: { backgroundColor: '#18181f', borderColor: '#2a2a38', borderWidth: 1, titleColor: '#e8e8f0', bodyColor: '#7fff6e' } },
+      cutout: '65%'
+    }
+  });
+}
+
+  // ── XP BAR CHART ──
+  const barData = xpAmounts.map((a,i) => ({amt:a,proj:xpProjects[i]})).filter(x=>x.amt>0).sort((a,b)=>b.amt-a.amt).slice(0,15);
+  if (barData.length > 0) {
+    new Chart(document.getElementById('barChart').getContext('2d'), {
+      type: 'bar',
+      data: { labels: barData.map(x=>x.proj), datasets: [{ data: barData.map(x=>x.amt), backgroundColor: 'rgba(255,110,180,.6)', borderRadius: 2 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#18181f', borderColor: '#2a2a38', borderWidth: 1, titleColor: '#e8e8f0', bodyColor: '#ff6eb4' } },
+        scales: { x: { ticks: { color: '#666680', font: { family: 'DM Mono', size: 9 }, maxRotation: 45, minRotation: 45 }, grid: { display: false } }, y: { ticks: { color: '#666680', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 4, callback: (v) => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v }, grid: { color: 'rgba(255,255,255,.05)' } } }
+      }
+    });
+  }
+
+// ── SEARCH ──
+function filterTable(id, q) {
+  document.querySelectorAll('#' + id + ' tbody tr').forEach(r =>
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none'
+  );
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>
