@@ -1,9 +1,9 @@
 # Environment — never commit your token
 .env
 
-# Generated output files
-*.html
+# Generated output files (local only — docs/ is committed for GitHub Pages)
 *_raw.json
+*_portfolio.html
 
 # Python cache
 __pycache__/
