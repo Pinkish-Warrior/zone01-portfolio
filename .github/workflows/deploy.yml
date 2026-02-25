@@ -20,6 +20,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Check secrets are available
+        run: |
+          if [ -z "${{ secrets.JWT_TOKEN }}" ]; then echo "❌ JWT_TOKEN secret is empty or not set"; exit 1; fi
+          if [ -z "${{ secrets.STUDENT_LOGIN }}" ]; then echo "❌ STUDENT_LOGIN secret is empty or not set"; exit 1; fi
+          echo "✓ Secrets are present"
+
       - name: Run portfolio exporter
         env:
           JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
