@@ -20,13 +20,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Create .env from secrets
-        run: |
-          echo "JWT_TOKEN=${{ secrets.JWT_TOKEN }}" >> .env
-          echo "STUDENT_LOGIN=${{ secrets.STUDENT_LOGIN }}" >> .env
-          echo "STUDENT_ID=${{ secrets.STUDENT_ID }}" >> .env
-
       - name: Run portfolio exporter
+        env:
+          JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
+          STUDENT_LOGIN: ${{ secrets.STUDENT_LOGIN }}
+          STUDENT_ID: ${{ secrets.STUDENT_ID }}
         run: python fetch_01founders.py
 
       - name: Move HTML to docs/
