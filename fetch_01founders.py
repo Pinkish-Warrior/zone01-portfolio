@@ -420,6 +420,7 @@ def build_html(d: dict) -> str:
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5' fill='%237fff6e'/><text y='68' x='50' text-anchor='middle' font-size='52' font-family='sans-serif' fill='%230a0a0f' font-weight='bold'>01</text></svg>"/>
 <title>{login} — 01Founders Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
