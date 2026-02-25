@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -46,4 +48,4 @@ jobs:
           git reset --soft origin/Main
           git add docs/index.html
           git diff --staged --quiet || git commit -m "Update portfolio report"
-          git push origin Main
+          git push --force-with-lease origin Main
