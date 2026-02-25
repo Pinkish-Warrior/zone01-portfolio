@@ -254,6 +254,25 @@ def process(raw: dict, fallback_login: str) -> dict:
             skill_name = ttype.replace("skill_", "").replace("_", " ").title()
             skills[skill_name] = max(skills.get(skill_name, 0), t.get("amount", 0))
 
+    # ── Skill categories
+    SKILL_CATEGORIES = {
+        "Languages":        ["Go", "Python", "Js", "C", "Rust", "Sql"],
+        "Frontend":         ["Html", "Css", "Front-End"],
+        "Backend":          ["Back-End", "Django", "Graphql"],
+        "DevOps & Tools":   ["Docker", "Unix", "Git", "Sys-Admin"],
+        "Computer Science": ["Algo", "Prog", "Ai", "Stats"],
+        "Game Dev":         ["Game"],
+    }
+    skill_to_cat = {s: cat for cat, lst in SKILL_CATEGORIES.items() for s in lst}
+    categorized_skills = {}
+    for skill, val in skills.items():
+        cat = skill_to_cat.get(skill, "Other")
+        if cat not in categorized_skills:
+            categorized_skills[cat] = []
+        categorized_skills[cat].append({"name": skill, "level": val})
+    for cat in categorized_skills:
+        categorized_skills[cat].sort(key=lambda x: -x["level"])
+
     # ── Projects
     seen = set()
     projects = []
@@ -289,6 +308,7 @@ def process(raw: dict, fallback_login: str) -> dict:
         "total_xp":               total_xp,
         "xp_events":              xp_events,
         "skills":                 dict(sorted(skills.items(), key=lambda x: -x[1])),
+        "categorized_skills":     categorized_skills,
         "projects":               projects,
         "projects_passed":        sum(1 for p in projects if p["passed"]),
         "projects_total":         len(projects),
@@ -337,6 +357,25 @@ def build_html(d: dict) -> str:
           <span class="skill-name">{skill}</span>
           <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:{pct}%"></div></div>
           <span class="skill-val">{val}</span>
+        </div>"""
+
+    # Skill category cards
+    category_cards_html = ""
+    for cat, skills_list in d["categorized_skills"].items():
+        max_level = max((s["level"] for s in skills_list), default=1)
+        items_html = ""
+        for s in skills_list:
+            pct = int(s["level"] / max_level * 100)
+            items_html += f"""
+            <div class="skill-row">
+              <span class="skill-name">{s['name']}</span>
+              <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:{pct}%"></div></div>
+              <span class="skill-val">{s['level']}</span>
+            </div>"""
+        category_cards_html += f"""
+        <div class="card cat-card">
+          <p class="card-title">{cat}</p>
+          {items_html}
         </div>"""
 
     projects_rows = ""
@@ -467,6 +506,43 @@ def build_html(d: dict) -> str:
   @keyframes fadeUp {{ from {{ opacity:0; transform: translateY(16px); }} to {{ opacity:1; transform: translateY(0); }} }}
   .hero,.stats-bar,.card,.table-wrap {{ animation: fadeUp .45s ease both; }}
   .stats-bar {{ animation-delay:.08s; }} .grid-2 .card:nth-child(2) {{ animation-delay:.12s; }} .table-wrap {{ animation-delay:.18s; }}
+  /* ── PDF BUTTON ── */
+  .pdf-btn {{ font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; cursor: pointer; transition: all .2s; margin-top: 20px; display: inline-block; }}
+  .pdf-btn:hover {{ background: var(--accent); color: var(--bg); }}
+  /* ── SKILL CATEGORIES ── */
+  .cat-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }}
+  .cat-card .card-title {{ color: var(--accent2); }}
+  /* ── PRINT ── */
+  @media print {{
+    body {{ background: white; color: #111; }}
+    body::before {{ display: none; }}
+    .pdf-btn, .search-bar, .tabs, footer, .chart-wrap, canvas {{ display: none !important; }}
+    .tab-panel {{ display: block !important; }}
+    .hero {{ padding: 24px; border: none; }}
+    .hero::after {{ display: none; }}
+    .hero h1 {{ font-size: 28px; color: #111; }}
+    .hero h1 span {{ color: #111; }}
+    .hero-tag, .hero-meta b {{ color: #444; }}
+    .stats-bar {{ border: 1px solid #ddd; }}
+    .stat-cell {{ border-right: 1px solid #ddd; }}
+    .stat-num {{ color: #111 !important; font-size: 24px; }}
+    .stat-label, .stat-sub {{ color: #555; }}
+    .main {{ padding: 16px 24px; }}
+    .card {{ border: 1px solid #ddd; background: white; break-inside: avoid; }}
+    .card-title {{ color: #555; }}
+    .cat-card .card-title {{ color: #222; font-weight: 700; }}
+    .skill-bar-fill {{ background: #333 !important; }}
+    .skill-name, .skill-val {{ color: #111; }}
+    .section-title {{ color: #222; border-color: #ddd; }}
+    th {{ color: #555; }} td {{ color: #111; border-color: #eee; }}
+    .badge.pass {{ background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }}
+    .badge.fail {{ background: #ffebee; color: #c62828; border-color: #ef9a9a; }}
+    .type-tag {{ color: #555; border-color: #ddd; background: #f5f5f5; }}
+    .grid-2, .cat-grid {{ grid-template-columns: 1fr 1fr; }}
+    .email-blur {{ filter: none !important; }}
+    .table-wrap {{ margin-bottom: 16px; }}
+    a {{ text-decoration: none; color: inherit; }}
+  }}
 </style>
 </head>
 <body>
@@ -480,6 +556,7 @@ def build_html(d: dict) -> str:
     <div><b>Joined</b>{joined}</div>
     <div><b>Generated</b>{generated}</div>
   </div>
+  <button class="pdf-btn" onclick="window.print()">Export as PDF</button>
 </header>
 
 <!-- STATS BAR -->
@@ -546,8 +623,14 @@ def build_html(d: dict) -> str:
     </div>
   </div>
 
+  <!-- SKILLS BY CATEGORY -->
+  <p class="section-title" style="margin-top:8px">Skills by Category</p>
+  <div class="cat-grid">
+    {category_cards_html}
+  </div>
+
   <!-- PROJECTS TABLE -->
-  <p class="section-title" style="margin-top:8px">Projects</p>
+  <p class="section-title">Projects</p>
   <input class="search-bar" type="text" id="searchInput" placeholder="Search projects..." oninput="filterTable('projectsTable', this.value)"/>
   <div class="table-wrap">
     <table id="projectsTable">
