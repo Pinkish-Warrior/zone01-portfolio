@@ -4,8 +4,9 @@
 Fetches XP, skills, audits given/received, and projects.
 
 .env file:
-  JWT_TOKEN=eyJ...
+  JWT_TOKEN=eyJ...      (optional — auto-read from browser if omitted)
   STUDENT_LOGIN=your-student-username
+  STUDENT_ID=your-numeric-id
 """
 
 import json
@@ -15,7 +16,29 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 
-API_URL = "https://learn.01founders.co/api/graphql-engine/v1/graphql"
+API_URL      = "https://learn.01founders.co/api/graphql-engine/v1/graphql"
+KEYRING_SVC  = "01founders-portfolio"
+KEYRING_USER = "jwt-token"
+
+
+# ──────────────────────────────────────────────
+# KEYCHAIN HELPERS
+# ──────────────────────────────────────────────
+
+def _keychain_get() -> str:
+    try:
+        import keyring
+        return keyring.get_password(KEYRING_SVC, KEYRING_USER) or ""
+    except Exception:
+        return ""
+
+
+def _keychain_set(token: str) -> None:
+    try:
+        import keyring
+        keyring.set_password(KEYRING_SVC, KEYRING_USER, token)
+    except Exception:
+        pass
 
 
 # ──────────────────────────────────────────────
@@ -25,31 +48,50 @@ API_URL = "https://learn.01founders.co/api/graphql-engine/v1/graphql"
 def load_env() -> dict:
     config = {"token": "", "login": "", "student_id": ""}
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+
+    # 1 — read .env for login + student_id
     if os.path.exists(env_path):
         with open(env_path) as f:
             for line in f:
                 line = line.strip()
-                if line.startswith("JWT_TOKEN="):
-                    config["token"] = line.split("=", 1)[1].strip().strip('"').strip("'")
-                elif line.startswith("STUDENT_LOGIN="):
+                if line.startswith("STUDENT_LOGIN="):
                     config["login"] = line.split("=", 1)[1].strip().strip('"').strip("'")
                 elif line.startswith("STUDENT_ID="):
                     config["student_id"] = line.split("=", 1)[1].strip().strip('"').strip("'")
-        if config["token"]:
-            print("  ✓ Token loaded from .env")
         if config["login"]:
             print(f"  ✓ Student login: {config['login']}")
         if config["student_id"]:
             print(f"  ✓ Student ID: {config['student_id']}")
-    if not config["token"]:
-        config["token"] = os.environ.get("JWT_TOKEN", "").strip()
+
+    # 2 — fall back to env vars
     if not config["login"]:
         config["login"] = os.environ.get("STUDENT_LOGIN", "").strip()
     if not config["student_id"]:
         config["student_id"] = os.environ.get("STUDENT_ID", "").strip()
-    if not config["token"]:
-        print("  ℹ Tip: create a .env with JWT_TOKEN=, STUDENT_LOGIN= and STUDENT_ID=")
-        config["token"] = input("  Paste your JWT token: ").strip()
+
+    # 3 — token: keychain first, prompt once on miss
+    token = _keychain_get()
+    if token:
+        print("  ✓ Token loaded from macOS Keychain")
+        config["token"] = token
+    else:
+        print("  ℹ No token in Keychain — paste it once and it will be saved securely.")
+        print()
+        print("  How to get your JWT token:")
+        print("  1. Open Google Chrome and go to https://learn.01founders.co")
+        print("  2. Press F12 to open DevTools")
+        print("  3. Click the 'Application' tab at the top of DevTools")
+        print("  4. In the left sidebar, find 'Storage' and expand it")
+        print("  5. Click 'Local Storage' to expand it")
+        print("  6. Click 'https://learn.01founders.co'")
+        print("  7. Find the key 'jwt-token' in the table")
+        print("  8. Copy the value (it starts with eyJ...)")
+        print()
+        config["token"] = input("  Paste JWT token here: ").strip()
+        if config["token"]:
+            _keychain_set(config["token"])
+            print("  ✓ Saved to macOS Keychain — won't be asked again until it expires")
+
     if not config["login"]:
         config["login"] = input("  Your student username: ").strip()
     return config
@@ -762,6 +804,29 @@ def main():
 
     print(f"\n[1/3] Fetching data for '{student_login}'...")
     raw = fetch_all(token, student_login)
+
+    # Detect expired token: user profile came back empty
+    if not raw.get("user"):
+        print("\n  ⚠ No data returned — token may have expired.")
+        _keychain_set("")   # clear stale token
+        print()
+        print("  Get a fresh token:")
+        print("  1. Open Google Chrome and go to https://learn.01founders.co")
+        print("  2. Press F12 to open DevTools")
+        print("  3. Click the 'Application' tab at the top of DevTools")
+        print("  4. In the left sidebar, find 'Storage' and expand it")
+        print("  5. Click 'Local Storage' to expand it")
+        print("  6. Click 'https://learn.01founders.co'")
+        print("  7. Find the key 'jwt-token' in the table")
+        print("  8. Copy the value (it starts with eyJ...)")
+        print()
+        new_token = input("  Paste new JWT token here: ").strip()
+        if not new_token:
+            print("✗ No token provided. Exiting.")
+            sys.exit(1)
+        _keychain_set(new_token)
+        print("  ✓ New token saved to Keychain. Re-fetching...\n")
+        raw = fetch_all(new_token, student_login)
 
     print("\n[2/3] Processing...")
     processed = process(raw, student_login)
