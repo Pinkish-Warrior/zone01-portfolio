@@ -813,6 +813,10 @@ def main():
     # Detect expired token: user profile came back empty
     if not raw.get("user"):
         print("\n  ⚠ No data returned — token may have expired.")
+        if not sys.stdin.isatty():
+            print("  ✗ Running in CI — update the JWT_TOKEN secret in GitHub:")
+            print("    Repo → Settings → Secrets and variables → Actions → JWT_TOKEN")
+            sys.exit(1)
         _keychain_set("")   # clear stale token
         print()
         print("  Get a fresh token:")
