@@ -615,7 +615,7 @@ def build_html(d: dict) -> str:
   </div>
   <div class="stat-cell">
     <div class="stat-num blue">{d['projects_total']}</div>
-    <div class="stat-label">Projects Attempted</div>
+    <div class="stat-label">Projects Registered</div>
   </div>
   <div class="stat-cell">
     <div class="stat-num green">{d['projects_passed']}</div>
