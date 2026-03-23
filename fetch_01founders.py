@@ -63,34 +63,39 @@ def load_env() -> dict:
         if config["student_id"]:
             print(f"  ✓ Student ID: {config['student_id']}")
 
-    # 2 — fall back to env vars
+    # 2 — fall back to env vars (used by CI via GitHub Secrets)
     if not config["login"]:
         config["login"] = os.environ.get("STUDENT_LOGIN", "").strip()
     if not config["student_id"]:
         config["student_id"] = os.environ.get("STUDENT_ID", "").strip()
+    env_token = os.environ.get("JWT_TOKEN", "").strip()
+    if env_token:
+        print("  ✓ Token loaded from environment variable")
+        config["token"] = env_token
 
-    # 3 — token: keychain first, prompt once on miss
-    token = _keychain_get()
-    if token:
-        print("  ✓ Token loaded from macOS Keychain")
-        config["token"] = token
-    else:
-        print("  ℹ No token in Keychain — paste it once and it will be saved securely.")
-        print()
-        print("  How to get your JWT token:")
-        print("  1. Open Google Chrome and go to https://learn.01founders.co")
-        print("  2. Press F12 to open DevTools")
-        print("  3. Click the 'Application' tab at the top of DevTools")
-        print("  4. In the left sidebar, find 'Storage' and expand it")
-        print("  5. Click 'Local Storage' to expand it")
-        print("  6. Click 'https://learn.01founders.co'")
-        print("  7. Find the key 'jwt-token' in the table")
-        print("  8. Copy the value (it starts with eyJ...)")
-        print()
-        config["token"] = input("  Paste JWT token here: ").strip()
-        if config["token"]:
-            _keychain_set(config["token"])
-            print("  ✓ Saved to macOS Keychain — won't be asked again until it expires")
+    # 3 — token: keychain (local runs), then prompt once on miss
+    if not config["token"]:
+        token = _keychain_get()
+        if token:
+            print("  ✓ Token loaded from macOS Keychain")
+            config["token"] = token
+        else:
+            print("  ℹ No token in Keychain — paste it once and it will be saved securely.")
+            print()
+            print("  How to get your JWT token:")
+            print("  1. Open Google Chrome and go to https://learn.01founders.co")
+            print("  2. Press F12 to open DevTools")
+            print("  3. Click the 'Application' tab at the top of DevTools")
+            print("  4. In the left sidebar, find 'Storage' and expand it")
+            print("  5. Click 'Local Storage' to expand it")
+            print("  6. Click 'https://learn.01founders.co'")
+            print("  7. Find the key 'jwt-token' in the table")
+            print("  8. Copy the value (it starts with eyJ...)")
+            print()
+            config["token"] = input("  Paste JWT token here: ").strip()
+            if config["token"]:
+                _keychain_set(config["token"])
+                print("  ✓ Saved to macOS Keychain — won't be asked again until it expires")
 
     if not config["login"]:
         config["login"] = input("  Your student username: ").strip()
